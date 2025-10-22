@@ -1,4 +1,4 @@
-const Post = require('../models/Post');
+import Post from '../models/Post.js';
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -82,7 +82,6 @@ const updatePost = async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    // Check if user owns the post
     if (post.author.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized to update this post' });
     }
@@ -109,12 +108,9 @@ const deletePost = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
-
-    // Check if user owns the post
     if (post.author.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized to delete this post' });
     }
-
     await Post.findByIdAndDelete(req.params.id);
     res.json({ message: 'Post removed' });
   } catch (error) {
@@ -152,11 +148,6 @@ const addComment = async (req, res) => {
   }
 };
 
-module.exports = {
-  getPosts,
-  getPost,
-  createPost,
-  updatePost,
-  deletePost,
-  addComment,
+export {
+  addComment, createPost, deletePost, getPost, getPosts, updatePost
 };

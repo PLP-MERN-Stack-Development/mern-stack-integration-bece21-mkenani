@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema({
   title: {
@@ -49,4 +49,6 @@ const postSchema = new mongoose.Schema({
 // Add index for better search performance
 postSchema.index({ title: 'text', content: 'text' });
 
-module.exports = mongoose.model('Post', postSchema);
+const Post = mongoose.model('Post', postSchema);
+
+export default Post;
