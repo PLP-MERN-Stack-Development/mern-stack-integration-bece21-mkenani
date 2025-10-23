@@ -1,14 +1,10 @@
-import User from '../models/user.js';
-import generateToken from '../utils/generateToken.js';
+const User = require('../models/User');
+const generateToken = require('../utils/generateToken');
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
 const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if user exists
     const userExists = await User.findOne({ 
       $or: [{ email }, { username }] 
     });
@@ -19,7 +15,6 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Create user
     const user = await User.create({
       username,
       email,
@@ -40,14 +35,10 @@ const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user by email
     const user = await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
@@ -66,9 +57,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Get current user
-// @route   GET /api/auth/me
-// @access  Private
 const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -78,4 +66,8 @@ const getMe = async (req, res) => {
   }
 };
 
-export { getMe, loginUser, registerUser };
+module.exports = {
+  registerUser,
+  loginUser,
+  getMe,
+};
