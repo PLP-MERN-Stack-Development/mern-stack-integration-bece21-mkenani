@@ -1,4 +1,4 @@
-import Post from '../models/Post.js';
+const Post = require('../models/Post');
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -148,6 +148,44 @@ const addComment = async (req, res) => {
   }
 };
 
-export {
-  addComment, createPost, deletePost, getPost, getPosts, updatePost
+// @desc    Like/Unlike a post
+// @route   PUT /api/posts/:id/like
+// @access  Private
+const toggleLike = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    // Check if user already liked the post
+    const isLiked = post.likes.some(
+      (userId) => userId.toString() === req.user.id
+    );
+
+    if (isLiked) {
+      // Unlike: remove user from likes array
+      post.likes = post.likes.filter(
+        (userId) => userId.toString() !== req.user.id
+      );
+    } else {
+      // Like: add user to likes array
+      post.likes.push(req.user.id);
+    }
+
+    await post.save();
+
+    const updatedPost = await Post.findById(req.params.id)
+      .populate('author', 'username profilePicture')
+      .populate('comments.user', 'username profilePicture');
+
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  addComment, createPost, deletePost, getPost, getPosts, updatePost, toggleLike
 };

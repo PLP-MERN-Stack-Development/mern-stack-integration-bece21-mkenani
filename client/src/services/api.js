@@ -47,6 +47,7 @@ export const postsAPI = {
   updatePost: (id, postData) => api.put(`/posts/${id}`, postData),
   deletePost: (id) => api.delete(`/posts/${id}`),
   addComment: (id, comment) => api.post(`/posts/${id}/comments`, comment),
+  toggleLike: (id) => api.put(`/posts/${id}/like`),
 };
 
 export default api;
